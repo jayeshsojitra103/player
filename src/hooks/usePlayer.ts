@@ -1,22 +1,19 @@
-import { playlist } from '../pages/player/data'
-import { useEffect, useRef, useState } from "react";
+import { playlist } from '../pages/player1/data'
+import { useRef, useState } from "react";
 
 export const usePlayer = () => {
     const audioContainerRef = useRef<any>(null);
-    const volumeContainerRef = useRef<any>(null);
-    const progressContainerRef = useRef<any>(null);
 
     const [play, setPlay] = useState<boolean>(false);
     const [activeMusicIndex, setActiveMusicIndex] = useState<number>(0);
     const [playMode, setPlayMode] = useState<string>("loop");
     const [leftTime, setLeftTime] = useState<number>(0);
-    const [volume, setVolume] = useState<number>(0)
-    const [progress, setProgress] = useState<number>(0);
+    const [audioPercentage, setAudioPercentage] = useState<number>(0);
+    const [volumePercentage, setVolumePercentage] = useState<number>(100);
 
 
     const modeList = ["loop", "random", "repeat"];
     const btnColor = "#4a4a4a";
-    const progressColor = "#fff";
     const activeMusic = playlist[activeMusicIndex];
     const playModeClass =
         playMode === "loop"
@@ -25,36 +22,30 @@ export const usePlayer = () => {
                 ? "random"
                 : "repeat";
     const btnStyle = { color: btnColor };
-    const progressStyle = {
-        width: `${progress * 100}%`,
-        backgroundColor: progressColor
-    };
-    const volumeProgressStyle: {
-        width: string,
-        backgroundColor: string
-    } = {
-        width: `${volume * 100}%`,
-        backgroundColor: progressColor
-    };
 
-
-    const onPlayerUpdate = () => {
-        const duration = audioContainerRef?.current?.duration;
-        const currentTime = audioContainerRef?.current?.currentTime;
-        setLeftTime(duration - currentTime);
+    const onVolumeToggle = () => {
+        setVolumePercentage(volumePercentage === 0 ? 100 : 0);
+        audioContainerRef.current.volume = volumePercentage === 0 ? 1 : 0
+    }
+    const onVolumeSliderChange = (e: any) => {
+        audioContainerRef.current.volume = e.target.value / 100;;
+        setVolumePercentage(e.target.value)
     }
 
+    const onSongSliderChange = (e: any) => {
+        const audio = audioContainerRef?.current;
+        const currentTime = audioContainerRef?.current?.currentTime;
+        audio.currentTime = (audio?.duration / 100) * e.target.value;
 
-    const handleAdjustProgress = (e: { clientX: number; }) => {
-        const progressContainer = progressContainerRef?.current;
-        const progress =
-            (e.clientX - progressContainer.getBoundingClientRect().left) /
-            progressContainer.clientWidth;
-        const currentTime = audioContainerRef?.current?.duration * progress;
-        audioContainerRef.current.currentTime = currentTime;
-        setPlay(true);
-        setProgress(progress);
-        audioContainerRef?.current?.play();
+        setLeftTime(audio?.duration - currentTime);
+        setAudioPercentage(e.target.value)
+    }
+    const onPlayerUpdate = (e: any) => {
+        const duration = audioContainerRef?.current?.duration;
+        const currentTime = audioContainerRef?.current?.currentTime;
+        const percent = ((e.currentTarget.currentTime / e.currentTarget.duration) * 100).toFixed(2)
+        setLeftTime(duration - currentTime);
+        setAudioPercentage(+percent)
     }
 
 
@@ -79,19 +70,6 @@ export const usePlayer = () => {
         } else {
             setPlay(false)
         }
-    }
-
-
-    const handleAdjustVolume = (e: { clientX: number; }) => {
-        const volumeContainer = volumeContainerRef?.current;
-        let volume =
-            (e.clientX - volumeContainer.getBoundingClientRect().left) /
-            volumeContainer.clientWidth;
-        volume = volume < 0 ? 0 : volume;
-        audioContainerRef.current.volume = volume;
-        setVolume(volume);
-
-        console.log("volume", volume)
     }
 
     const handleChangePlayMode = () => {
@@ -122,7 +100,7 @@ export const usePlayer = () => {
         setActiveMusicIndex(index);
         setLeftTime(0)
         setPlay(true);
-        setProgress(0);
+        setAudioPercentage(0)
         audioContainerRef.current.currentTime = 0;
         audioContainerRef?.current?.play();
     }
@@ -134,6 +112,7 @@ export const usePlayer = () => {
     const processArtistName = (artistList: Array<string>) => {
         return artistList.join(" / ");
     }
+
 
     const formatSeconds = (secs: number): string => {
         let hr = Math.floor(Number(secs) / 3600);
@@ -152,11 +131,7 @@ export const usePlayer = () => {
         activeMusic,
         processArtistName,
         leftTime,
-        handleAdjustVolume,
-        volumeContainerRef,
-        handleAdjustProgress,
-        progressContainerRef,
-        progressStyle,
+        audioPercentage,
         playModeClass,
         btnStyle,
         handleChangePlayMode,
@@ -165,6 +140,9 @@ export const usePlayer = () => {
         handleNext,
         formatSeconds,
         onPlayerUpdate,
-        volumeProgressStyle
+        onSongSliderChange,
+        onVolumeSliderChange,
+        volumePercentage,
+        onVolumeToggle
     }
 }
