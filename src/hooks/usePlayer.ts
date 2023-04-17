@@ -1,8 +1,9 @@
-import { playlist } from '../pages/player1/data'
-import { useRef, useState } from "react";
 
+import { useEffect, useRef, useState } from "react";
+import { playlist } from '../utils/data';
 export const usePlayer = () => {
     const audioContainerRef = useRef<any>(null);
+    const waveformRef = useRef<any>(null);
 
     const [play, setPlay] = useState<boolean>(false);
     const [activeMusicIndex, setActiveMusicIndex] = useState<number>(0);
@@ -10,9 +11,8 @@ export const usePlayer = () => {
     const [leftTime, setLeftTime] = useState<number>(0);
     const [audioPercentage, setAudioPercentage] = useState<number>(0);
     const [volumePercentage, setVolumePercentage] = useState<number>(100);
+    const [isWavePlay, setISWavePlay] = useState<boolean>(false)
 
-
-    const modeList = ["loop", "random", "repeat"];
     const btnColor = "#4a4a4a";
     const activeMusic = playlist[activeMusicIndex];
     const playModeClass =
@@ -22,6 +22,11 @@ export const usePlayer = () => {
                 ? "random"
                 : "repeat";
     const btnStyle = { color: btnColor };
+
+    useEffect(() => {
+
+    }, []);
+
 
     const onVolumeToggle = () => {
         setVolumePercentage(volumePercentage === 0 ? 100 : 0);
@@ -48,7 +53,6 @@ export const usePlayer = () => {
         setAudioPercentage(+percent)
     }
 
-
     const end = () => {
         handleNext()
     }
@@ -70,12 +74,6 @@ export const usePlayer = () => {
         } else {
             setPlay(false)
         }
-    }
-
-    const handleChangePlayMode = () => {
-        let index = modeList.indexOf(playMode);
-        index = (index + 1) % modeList.length;
-        setPlayMode(modeList[index])
     }
 
     const handlePrev = () => {
@@ -104,6 +102,7 @@ export const usePlayer = () => {
         audioContainerRef.current.currentTime = 0;
         audioContainerRef?.current?.play();
     }
+
     const handleToggle = () => {
         play ? audioContainerRef?.current?.pause() : audioContainerRef?.current?.play();
         setPlay(!play)
@@ -112,7 +111,6 @@ export const usePlayer = () => {
     const processArtistName = (artistList: Array<string>) => {
         return artistList.join(" / ");
     }
-
 
     const formatSeconds = (secs: number): string => {
         let hr = Math.floor(Number(secs) / 3600);
@@ -125,6 +123,10 @@ export const usePlayer = () => {
 
         return min + ':' + sec;
     }
+
+    const onWaveToggle = () => {
+        setISWavePlay(!isWavePlay)
+    }
     return {
         play,
         audioContainerRef,
@@ -134,7 +136,6 @@ export const usePlayer = () => {
         audioPercentage,
         playModeClass,
         btnStyle,
-        handleChangePlayMode,
         handlePrev,
         handleToggle,
         handleNext,
@@ -143,6 +144,9 @@ export const usePlayer = () => {
         onSongSliderChange,
         onVolumeSliderChange,
         volumePercentage,
-        onVolumeToggle
+        onVolumeToggle,
+        onWaveToggle,
+        isWavePlay,
+        waveformRef
     }
 }
