@@ -1,31 +1,62 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 import WaveSurfer from 'wavesurfer.js';
 
 interface WaveSurferPlayerProps {
     audioUrl: string;
+    volumePercentage: number;
+    play: boolean;
+    waveSurferRef: WaveSurfer | null | any;
+    isSongLoading: boolean,
+    handleSongLoading: any
 }
 
-const WaveSurferPlayer: React.FC<WaveSurferPlayerProps> = ({ audioUrl }) => {
-    const waveSurferRef = useRef<WaveSurfer | null>(null);
+const WaveSurferPlayer: React.FC<WaveSurferPlayerProps> = (
+    { audioUrl,
+        volumePercentage,
+        play,
+        waveSurferRef,
+        isSongLoading,
+        handleSongLoading
+    }) => {
 
+
+    //Wave Surface
     useEffect(() => {
         waveSurferRef.current = WaveSurfer.create({
-            container: '#waveform',
-            waveColor: 'violet',
-            progressColor: 'purple',
-            cursorColor: 'navy',
-            backend: 'WebAudio',
-            height: 120,
-            barWidth: 2,
-            barHeight: 1,
-            barGap: 2,
-            normalize: true,
+            container: "#waveform",
+            waveColor: "#3b82f680",
+            progressColor: "#fff",
+            cursorColor: "#fff",
+            barWidth: 3,
+            barRadius: 3,
+            responsive: true,
+            autoCenter: false,
+            height: 30,
+            // If true, normalize by the maximum peak instead of 1.0.
+            normalize: false,
+            // Use the PeakCache to improve rendering speed of large waveforms.
+            partialRender: true,
         });
 
-        waveSurferRef.current.load(audioUrl);
-    }, [audioUrl]);
+        waveSurferRef?.current?.load(audioUrl);
 
-    return <div id="waveform" />;
+        waveSurferRef?.current?.on("ready", function () {
+            waveSurferRef?.current?.setVolume(0);
+            handleSongLoading(false)
+        });
+        return () => {
+            waveSurferRef?.current?.destroy()
+        }
+    }, []);
+
+
+
+
+    useEffect
+    return <>
+        <div id="waveform" ref={waveSurferRef} />
+
+    </>
 };
 
 export default WaveSurferPlayer;

@@ -1,9 +1,18 @@
 
 import { useEffect, useRef, useState } from "react";
+import WaveSurfer from 'wavesurfer.js';
+
 import { playlist } from '../utils/data';
+interface WaveSurferPlayerProps {
+    audioUrl: string;
+    volumePercentage: number,
+    play: boolean
+}
+
 export const usePlayer = () => {
     const audioContainerRef = useRef<any>(null);
-    const waveformRef = useRef<any>(null);
+    const waveSurferRef = useRef<WaveSurfer | null>(null);
+
 
     const [play, setPlay] = useState<boolean>(false);
     const [activeMusicIndex, setActiveMusicIndex] = useState<number>(0);
@@ -11,7 +20,8 @@ export const usePlayer = () => {
     const [leftTime, setLeftTime] = useState<number>(0);
     const [audioPercentage, setAudioPercentage] = useState<number>(0);
     const [volumePercentage, setVolumePercentage] = useState<number>(100);
-    const [isWavePlay, setISWavePlay] = useState<boolean>(false)
+    const [isWavePlay, setISWavePlay] = useState<boolean>(false);
+    const [isSongLoading, setIsSongLoading] = useState<boolean>(true)
 
     const btnColor = "#4a4a4a";
     const activeMusic = playlist[activeMusicIndex];
@@ -23,11 +33,12 @@ export const usePlayer = () => {
                 : "repeat";
     const btnStyle = { color: btnColor };
 
-    useEffect(() => {
-
-    }, []);
 
 
+    const handleSongLoading = (loading: boolean) => {
+        console.log("Check", loading)
+        setIsSongLoading(loading)
+    }
     const onVolumeToggle = () => {
         setVolumePercentage(volumePercentage === 0 ? 100 : 0);
         audioContainerRef.current.volume = volumePercentage === 0 ? 1 : 0
@@ -101,10 +112,14 @@ export const usePlayer = () => {
         setAudioPercentage(0)
         audioContainerRef.current.currentTime = 0;
         audioContainerRef?.current?.play();
+        waveSurferRef?.current?.play();
     }
 
     const handleToggle = () => {
         play ? audioContainerRef?.current?.pause() : audioContainerRef?.current?.play();
+        play ? waveSurferRef?.current?.pause() : waveSurferRef?.current?.play();
+
+        waveSurferRef?.current?.setVolume(0)
         setPlay(!play)
     }
 
@@ -147,6 +162,8 @@ export const usePlayer = () => {
         onVolumeToggle,
         onWaveToggle,
         isWavePlay,
-        waveformRef
+        waveSurferRef,
+        handleSongLoading,
+        isSongLoading
     }
 }

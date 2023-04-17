@@ -33,8 +33,12 @@ export default function Player() {
         volumePercentage,
         onVolumeToggle,
         isWavePlay,
-        waveformRef
-    } = usePlayer()
+        waveSurferRef,
+        handleSongLoading,
+        isSongLoading
+    } = usePlayer();
+
+    console.log("isSongLoading::::>", isSongLoading)
     return (
         <div className="playerContainer">
 
@@ -62,36 +66,48 @@ export default function Player() {
             </div>
             <div className='audioContainer'>
                 {
-                    !isWavePlay ?
-                        <>
-                            <div className='buttonsWrapper'>
-                                <div className='actionButton' onClick={handlePrev}>
-                                    Prev
-                                </div>
-
-                                <div className='actionButton controlButton' onClick={handleToggle}>
-                                    {
-                                        play ? "Pause" : "Play"
-                                    }
-                                </div>
-                                <div className='actionButton' onClick={handleNext}>
-                                    Next
-                                </div>
-                            </div>
-                            <div className='player-dragger'>
-                                <p className="timelapse" >{formatSeconds(leftTime)}</p>
-                                <Slider percentage={audioPercentage} onChange={onSongSliderChange} />
-                                <div className='timelapse'>{formatSeconds(audioContainerRef?.current?.duration)}</div>
+                    <>
+                        <div className='buttonsWrapper'>
+                            <div className='actionButton' onClick={handlePrev}>
+                                Prev
                             </div>
 
-                        </>
-                        : <DynamicWaveSurferPlayer audioUrl={activeMusic.url} />
+
+
+                            <div className='actionButton controlButton' onClick={handleToggle}>
+                                {
+                                    play ? "Pause" : "Play"
+                                }
+                            </div>
+
+                            <div className='actionButton' onClick={handleNext}>
+                                Next
+                            </div>
+                        </div>
+                        <div className='player-dragger'>
+                            <p className="timelapse" >{formatSeconds(leftTime)}</p>
+                            <Slider percentage={audioPercentage} onChange={onSongSliderChange} />
+                            <div className='timelapse'>{formatSeconds(audioContainerRef?.current?.duration)}</div>
+                        </div>
+
+                        <DynamicWaveSurferPlayer
+                            waveSurferRef={waveSurferRef}
+                            play={play}
+                            audioUrl={activeMusic.url}
+                            volumePercentage={volumePercentage}
+                            handleSongLoading={handleSongLoading}
+                            isSongLoading={isSongLoading}
+                        />
+                    </>
+
                 }
+
+
 
             </div>
             <div className='audioControl'>
                 <div className="volume-container">
-                    <div className="volume-icon" >
+                    <div className="volume-icon" onClick={onWaveToggle}>
                         <FontAwesomeIcon icon={faWaveSquare} />
                     </div>
                     <div className="volume-icon" onClick={onVolumeToggle}>
