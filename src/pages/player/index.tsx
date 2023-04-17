@@ -1,5 +1,6 @@
+import Image from 'next/image'
 
-import { usePlayer } from '@/hooks/usePlayer'
+import { usePlayer } from '@/hooks/usePlayer';
 
 export default function Player() {
     const {
@@ -7,100 +8,93 @@ export default function Player() {
         audioContainerRef,
         activeMusic,
         processArtistName,
-        formatSeconds,
         leftTime,
         handleAdjustVolume,
         volumeContainerRef,
         handleAdjustProgress,
         progressContainerRef,
         progressStyle,
-        playModeClass,
-        btnStyle,
         handleChangePlayMode,
         handlePrev,
         handleToggle,
-        handleNext
+        handleNext,
+        formatSeconds,
+        onPlayerUpdate,
+        volumeProgressStyle
     } = usePlayer()
+
     return (
-        <div className="player-container">
+        <div className="playerContainer">
             <audio
                 autoPlay={play}
                 preload="auto"
                 ref={audioContainerRef}
                 src={activeMusic.url}
+                onTimeUpdate={onPlayerUpdate}
             />
-            <div className="info-and-control">
-                <div className="music-info">
-                    <h2 className="title">{activeMusic.title}</h2>
-                    <h3 className="artist">
-                        {processArtistName(activeMusic.artist)}
-                    </h3>
+            <div className="albumContainer">
+                <div className='albumCover'>
+                    <Image
+                        src={activeMusic.cover}
+                        alt={activeMusic.title}
+                        width={500}
+                        height={500}
+                    />
                 </div>
-                <div className="time-and-volume">
-                    <div className="left-time">
-                        -{formatSeconds(leftTime)}
-                    </div>
-                    <div className="volume-container">
-                        <div className="volume-icon">
-                            <i className="icon fa fa-volume-up" />
-                        </div>
-                        <div className="volume-wrapper">
-                            <div
-                                className="progress-container"
-                                onClick={handleAdjustVolume}
-                                ref={volumeContainerRef}
-                            >
-                                <div
-                                    className="progress"
-                                    style={{ width: `volume * 100}%` }}
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-
+                <div className='albumTitle'>
+                    <h4>{activeMusic.title}</h4>
+                    <label>{processArtistName(activeMusic.artist)}</label>
                 </div>
 
-                <div
-                    className="progress-container"
-                    onClick={handleAdjustProgress}
-                    ref={progressContainerRef}
-                >
-                    <div className="progress" style={progressStyle} /></div>
-                <div className="control-container">
-                    <div className="mode-control">
-                        <i
-                            className={`icon fa fa-${playModeClass}`}
-                            style={btnStyle}
-                            onClick={handleChangePlayMode}
-                        />
+            </div>
+            <div className='audioContainer'>
+                <div className='buttonsWrapper'>
+                    <div className='actionButton' onClick={handlePrev}>
+                        Prev
                     </div>
-                    <div className="controls">
-                        <i
-                            className="icon fa fa-step-backward"
-                            style={btnStyle}
-                            onClick={handlePrev}
-                        />
-                        <i
-                            className={`icon fa fa-${play ? "pause" : "play"}`}
-                            style={btnStyle}
-                            onClick={handleToggle}
-                        />
-                        <i
-                            className="icon fa fa-step-forward"
-                            style={btnStyle}
-                            onClick={handleNext}
-                        />
+
+                    <div className='actionButton controlButton' onClick={handleToggle}>
+                        {
+                            play ? "Pause" : "Play"
+                        }
                     </div>
+                    <div className='actionButton' onClick={handleNext}>
+                        Next
+                    </div>
+                </div>
+                <div className='player-dragger'>
+                    <p className="current-time timelapse" >{formatSeconds(leftTime)}</p>
+                    <div
+                        className="progress-container"
+                        onClick={handleAdjustProgress}
+                        ref={progressContainerRef}
+                    >
+                        <div className="progress" style={progressStyle} />
+                    </div>
+
+                    <div className='full-time timelapse'>{formatSeconds(audioContainerRef?.current?.duration)}</div>
                 </div>
             </div>
+            <div className='audioControl'>
+                <div className="volume-container">
+                    <div className="volume-icon">
+                        <i className="icon fa fa-volume-up" />
+                    </div>
+                    <div className="volume-wrapper">
+                        {/* <div
+                            className="progress-container"
+                            onClick={handleAdjustVolume}
+                            ref={volumeContainerRef}
+                        >
+                            <div
+                                className="progress"
+                                style={volumeProgressStyle}
+                            />
+                        </div> */}
+                    </div>
+                </div>
 
-            <div className="cover-container">
-                <div
-                    className="cover"
-                    style={{ backgroundImage: `url(${activeMusic.cover})` }}
-                />
             </div>
         </div>
-    )
+    );
 }

@@ -29,7 +29,10 @@ export const usePlayer = () => {
         width: `${progress * 100}%`,
         backgroundColor: progressColor
     };
-    const volumeprogressStyle = {
+    const volumeProgressStyle: {
+        width: string,
+        backgroundColor: string
+    } = {
         width: `${volume * 100}%`,
         backgroundColor: progressColor
     };
@@ -162,6 +165,6 @@ export const usePlayer = () => {
         handleNext,
         formatSeconds,
         onPlayerUpdate,
-        volumeprogressStyle
+        volumeProgressStyle
     }
 }
