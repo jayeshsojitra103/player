@@ -53,10 +53,7 @@ const WaveSurferPlayer: React.FC<WaveSurferPlayerProps> = (
 
 
     useEffect
-    return <>
-        <div id="waveform" ref={waveSurferRef} />
-
-    </>
+    return <div id="waveform" ref={waveSurferRef} ></div>
 };
 
 export default WaveSurferPlayer;

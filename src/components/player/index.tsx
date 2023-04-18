@@ -1,11 +1,11 @@
+import { useEffect } from 'react';
 import Image from 'next/image'
-
 import { usePlayer } from '@/hooks/usePlayer';
 import Slider from '@/components/slider/Slider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWaveSquare } from '@fortawesome/free-solid-svg-icons';
 import dynamic from 'next/dynamic';
-import { useEffect } from 'react';
+
 
 
 const DynamicWaveSurferPlayer = dynamic(
@@ -13,8 +13,6 @@ const DynamicWaveSurferPlayer = dynamic(
     { ssr: false }
 );
 export default function Player() {
-
-
     const {
         play,
         audioContainerRef,
