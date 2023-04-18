@@ -36,7 +36,7 @@ export default function Player() {
         isSongLoading
     } = usePlayer();
 
-    console.log("isSongLoading::::>", isSongLoading)
+
     return (
         <div className="playerContainer">
 
@@ -66,21 +66,19 @@ export default function Player() {
                 {
                     <>
                         <div className='buttonsWrapper'>
-                            <div className='actionButton' onClick={handlePrev}>
+                            <button className='actionButton' onClick={handlePrev} disabled={isSongLoading}>
                                 Prev
-                            </div>
+                            </button>
 
-
-
-                            <div className='actionButton controlButton' onClick={handleToggle}>
+                            <button className='actionButton controlButton' onClick={handleToggle} disabled={isSongLoading}>
                                 {
                                     play ? "Pause" : "Play"
                                 }
-                            </div>
+                            </button>
 
-                            <div className='actionButton' onClick={handleNext}>
+                            <button className='actionButton' onClick={handleNext} disabled={isSongLoading}>
                                 Next
-                            </div>
+                            </button>
                         </div>
                         <div className='player-dragger'>
                             <p className="timelapse" >{formatSeconds(leftTime)}</p>

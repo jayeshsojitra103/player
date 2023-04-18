@@ -19,7 +19,7 @@ export const usePlayer = () => {
     const [playMode, setPlayMode] = useState<string>("loop");
     const [leftTime, setLeftTime] = useState<number>(0);
     const [audioPercentage, setAudioPercentage] = useState<number>(0);
-    const [volumePercentage, setVolumePercentage] = useState<number>(100);
+    const [volumePercentage, setVolumePercentage] = useState<number>(30);
     const [isWavePlay, setISWavePlay] = useState<boolean>(false);
     const [isSongLoading, setIsSongLoading] = useState<boolean>(true)
 
@@ -36,7 +36,7 @@ export const usePlayer = () => {
 
 
     const handleSongLoading = (loading: boolean) => {
-        console.log("Check", loading)
+
         setIsSongLoading(loading)
     }
     const onVolumeToggle = () => {
@@ -44,7 +44,7 @@ export const usePlayer = () => {
         audioContainerRef.current.volume = volumePercentage === 0 ? 1 : 0
     }
     const onVolumeSliderChange = (e: any) => {
-        audioContainerRef.current.volume = e.target.value / 100;;
+        audioContainerRef.current.volume = e.target.value / 100;
         setVolumePercentage(e.target.value)
     }
 
@@ -118,6 +118,9 @@ export const usePlayer = () => {
     const handleToggle = () => {
         play ? audioContainerRef?.current?.pause() : audioContainerRef?.current?.play();
         play ? waveSurferRef?.current?.pause() : waveSurferRef?.current?.play();
+
+        audioContainerRef.current.volume = 30 / 100;
+        setVolumePercentage(30)
 
         waveSurferRef?.current?.setVolume(0)
         setPlay(!play)
