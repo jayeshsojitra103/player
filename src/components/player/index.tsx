@@ -6,8 +6,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWaveSquare } from '@fortawesome/free-solid-svg-icons';
 import dynamic from 'next/dynamic';
 
-
-
 const DynamicWaveSurferPlayer = dynamic(
     () => import('../../components/WaveSurferPlayer/WaveSurferPlayer'),
     { ssr: false }
@@ -33,13 +31,13 @@ export default function Player() {
         isWavePlay,
         waveSurferRef,
         handleSongLoading,
-        isSongLoading
+        isSongLoading,
+        onWaveSeekChange
     } = usePlayer();
 
 
     return (
         <div className="playerContainer">
-
             <audio
                 autoPlay={play}
                 preload="auto"
@@ -75,7 +73,6 @@ export default function Player() {
                                     play ? "Pause" : "Play"
                                 }
                             </button>
-
                             <button className='actionButton' onClick={handleNext} disabled={isSongLoading}>
                                 Next
                             </button>
@@ -85,21 +82,15 @@ export default function Player() {
                             <Slider percentage={audioPercentage} onChange={onSongSliderChange} />
                             <div className='timelapse'>{formatSeconds(audioContainerRef?.current?.duration)}</div>
                         </div>
-
                         <DynamicWaveSurferPlayer
                             waveSurferRef={waveSurferRef}
-                            play={play}
                             audioUrl={activeMusic.url}
-                            volumePercentage={volumePercentage}
                             handleSongLoading={handleSongLoading}
-                            isSongLoading={isSongLoading}
+                            onWaveSeekChange={onWaveSeekChange}
                         />
                     </>
 
                 }
-
-
-
             </div>
             <div className='audioControl'>
                 <div className="volume-container">

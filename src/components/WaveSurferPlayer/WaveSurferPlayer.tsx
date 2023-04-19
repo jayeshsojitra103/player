@@ -3,20 +3,17 @@ import WaveSurfer from 'wavesurfer.js';
 
 interface WaveSurferPlayerProps {
     audioUrl: string;
-    volumePercentage: number;
-    play: boolean;
     waveSurferRef: WaveSurfer | null | any;
-    isSongLoading: boolean,
-    handleSongLoading: any
+    handleSongLoading: any,
+    onWaveSeekChange: any
 }
 
 const WaveSurferPlayer: React.FC<WaveSurferPlayerProps> = (
-    { audioUrl,
-        volumePercentage,
-        play,
+    {
+        audioUrl,
         waveSurferRef,
-        isSongLoading,
-        handleSongLoading
+        handleSongLoading,
+        onWaveSeekChange
     }) => {
 
 
@@ -39,7 +36,6 @@ const WaveSurferPlayer: React.FC<WaveSurferPlayerProps> = (
         });
 
         waveSurferRef?.current?.load(audioUrl);
-
         waveSurferRef?.current?.on("ready", function () {
             waveSurferRef?.current?.setVolume(0);
             handleSongLoading(false)
@@ -48,13 +44,15 @@ const WaveSurferPlayer: React.FC<WaveSurferPlayerProps> = (
             waveSurferRef?.current?.destroy()
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [audioUrl]);
 
 
-
+    waveSurferRef?.current?.on('seek', function (progress: number) {
+        onWaveSeekChange(progress * 100)
+    });
 
     useEffect
-    return <div id="waveform" ref={waveSurferRef} ></div>
+    return <div id="waveform" ref={waveSurferRef} ></div >
 };
 
 export default WaveSurferPlayer;

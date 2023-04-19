@@ -36,26 +36,41 @@ export const usePlayer = () => {
 
 
     const handleSongLoading = (loading: boolean) => {
-
         setIsSongLoading(loading)
     }
+
     const onVolumeToggle = () => {
         setVolumePercentage(volumePercentage === 0 ? 100 : 0);
         audioContainerRef.current.volume = volumePercentage === 0 ? 1 : 0
     }
+
     const onVolumeSliderChange = (e: any) => {
         audioContainerRef.current.volume = e.target.value / 100;
         setVolumePercentage(e.target.value)
     }
 
     const onSongSliderChange = (e: any) => {
-        const audio = audioContainerRef?.current;
-        const currentTime = audioContainerRef?.current?.currentTime;
-        audio.currentTime = (audio?.duration / 100) * e.target.value;
+        if (play) {
+            const value = e?.target?.value;
+            const audio = audioContainerRef?.current;
+            const currentTime = audioContainerRef?.current?.currentTime;
+            audio.currentTime = (audio?.duration / 100) * value;
+            //Update audio player slider 
+            setLeftTime(audio?.duration - currentTime);
+            setAudioPercentage(value);
 
-        setLeftTime(audio?.duration - currentTime);
-        setAudioPercentage(e.target.value)
+            //Update WaveSurfer
+            const position = parseFloat(value) / 100;
+            waveSurferRef.current?.seekTo(position);
+        }
+        else {
+            waveSurferRef.current?.seekTo(0);
+            setAudioPercentage(0);
+            setLeftTime(0)
+
+        }
     }
+
     const onPlayerUpdate = (e: any) => {
         const duration = audioContainerRef?.current?.duration;
         const currentTime = audioContainerRef?.current?.currentTime;
@@ -145,6 +160,22 @@ export const usePlayer = () => {
     const onWaveToggle = () => {
         setISWavePlay(!isWavePlay)
     }
+
+    //Wave logic
+    const onWaveSeekChange = (value: number) => {
+        if (play) {
+            const audio = audioContainerRef?.current;
+            const currentTime = audioContainerRef?.current?.currentTime;
+            audio.currentTime = (audio?.duration / 100) * value;
+
+            setLeftTime(audio?.duration - currentTime);
+            setAudioPercentage(value)
+        }
+        else {
+            setAudioPercentage(0);
+            setLeftTime(0)
+        }
+    }
     return {
         play,
         audioContainerRef,
@@ -167,6 +198,7 @@ export const usePlayer = () => {
         isWavePlay,
         waveSurferRef,
         handleSongLoading,
-        isSongLoading
+        isSongLoading,
+        onWaveSeekChange
     }
 }
